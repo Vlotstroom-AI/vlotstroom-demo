@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Installatiebedrijf Voorbeeld · Vlotstroom demo</title>
+<meta name="robots" content="noindex">
+<style>
+html,body{margin:0;height:100%;background:#F5F3EE;font-family:Inter,system-ui,sans-serif;color:#15202B}
+.l{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px}
+.m{width:44px;height:44px;border-radius:12px;background:#C2410C;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px}
+.s{width:22px;height:22px;border:3px solid #E7E3DA;border-top-color:#C2410C;border-radius:50%;animation:r .8s linear infinite}
+@keyframes r{to{transform:rotate(360deg)}}
+p{margin:0;color:#5B6670;font-size:14px}.e{max-width:420px;text-align:center;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="l" id="l"><div class="m">IV</div><div class="s"></div><p id="t">Even geduld, de omgeving wordt geladen…</p></div>
+<script>
+(function () {
+  var EXEC = 'https://script.google.com/macros/s/AKfycby53JHH94UvrAlJ8Q2DN4SzmpMDVhxfXZ_XwG7i-OHO8ELctfAulqywjP9G7iN8FQ8zjQ/exec';
+  // Vervangt google.script.run: elke serveraanroep gaat als POST naar de demo-motor.
+  var SHIM = '<script>(function(){var EXEC=' + JSON.stringify(EXEC) + ';' +
+    'function mk(ok,fail){return new Proxy({},{get:function(t,k){' +
+    'if(k==="withSuccessHandler")return function(h){return mk(h,fail);};' +
+    'if(k==="withFailureHandler")return function(h){return mk(ok,h);};' +
+    'if(k==="withUserObject")return function(){return mk(ok,fail);};' +
+    'return function(){var a=[].slice.call(arguments);' +
+    'fetch(EXEC,{method:"POST",body:JSON.stringify({fn:k,args:a})}).then(function(r){return r.json();})' +
+    '.then(function(j){if(j.ok){ok&&ok(j.r);}else{fail&&fail(new Error(j.e));}})' +
+    '.catch(function(){fail&&fail(new Error("Geen verbinding met de server. Probeer het opnieuw."));});};}});}' +
+    'window.google={script:{run:mk(null,null)}};})();<\/script>';
+  var q = location.search || '';
+  var url = EXEC + (q ? q + '&' : '?') + 'fmt=raw';
+  fetch(url).then(function (r) { return r.json(); }).then(function (d) {
+    var h = d.html;
+    var kop = '<meta name="viewport" content="width=device-width, initial-scale=1"><title>' +
+      String(d.title || '').replace(/</g, '&lt;') + '</title>' + SHIM;
+    h = /<head>/i.test(h) ? h.replace(/<head>/i, '<head>' + kop) : kop + h;
+    document.open(); document.write(h); document.close();
+  }).catch(function () {
+    document.getElementById('t').className = 'e';
+    document.getElementById('t').textContent = 'De omgeving is even niet bereikbaar. Ververs de pagina over enkele ogenblikken.';
+    document.querySelector('.s').style.display = 'none';
+  });
+})();
+</script>
+</body>
+</html>
